@@ -1,13 +1,12 @@
 from enum import unique
-from flask_restplus.resource import Resource
-from app import db
+from flask_restx.resource import Resource
+from app import app,db
 from datetime import datetime
-
 
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True)
+    name = db.Column(db.String(80))
     email = db.Column(db.String(120), unique=True)
     mobile = db.Column(db.String(300), unique=True)
     technology = db.Column(db.String(200))
@@ -52,7 +51,7 @@ class Queries(db.Model):
     __tablename__ = "queries"
     id = db.Column(db.Integer, primary_key=True)
     u_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    title = db.Column(db.String(300), unique=True)
+    title = db.Column(db.String(300))
     description = db.Column(db.Text)
     t_id = db.Column(db.Integer, db.ForeignKey('technologies.id'))
     filename = db.Column(db.Text)
@@ -104,6 +103,16 @@ class Roles(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
+    status=db.Column(db.Boolean,default=True)
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    def __init__(self, name, status, created_at, updated_at):
+        self.name = name
+        self.status = status
+        self.created_at = created_at
+        self.updated_at = updated_at
+        
 
 class Opinion(db.Model):
     __tablename__ = "opinion"
@@ -146,12 +155,14 @@ class SavedQueries(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     u_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     q_id = db.Column(db.Integer, db.ForeignKey('queries.id'))
+    status = db.Column(db.Boolean,default=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
-    def __init__(self,u_id, q_id, created_at, updated_at):
+    def __init__(self,u_id, q_id, status, created_at, updated_at):
         self.u_id = u_id
         self.q_id = q_id
+        self.status = status
         self.created_at = created_at
         self.updated_at = updated_at
 
@@ -179,4 +190,3 @@ class Support(db.Model):
         self.created_at = created_at
         self.updated_at = updated_at
 
-db.create_all()

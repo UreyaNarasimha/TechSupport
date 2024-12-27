@@ -1,8 +1,8 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
-from flask_restplus import Api
-from flask_cors import CORS
+from flask_restx import Api
+# from flask_cors import CORS
 from flask_migrate import Migrate
 
 # from OpenSSL import SSL
@@ -12,9 +12,6 @@ from flask_migrate import Migrate
 
 
 app = Flask(__name__)
-CORS(app)
-cors = CORS(app, resources={r"": {"origins": ""}, })
-# app.secret_key="IIOOOOOWREE"
 app.config['SECRET_KEY'] = 'rmijlkqqqawtre@1((11'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Mysql#123@localhost/tech_support'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
@@ -22,61 +19,70 @@ db = SQLAlchemy(app)
 migrate=Migrate(app,db)
 api = Api(app)
 
-from app.user.queries.queries import UserGetQueryByTechnology,UserGetQueryByUserId, UserGetQueryByTechnology,UserQueries,\
-    UserGetQueryByTitle,SaveQuery
-from app.user.comments.comments import UserComment,UserGetCommentByQueryId,UserGetCommentsByuserId
+with app.app_context():
+    db.create_all() 
+
+from app.user.queries.queries import UserQueries, UserGetQueryByQueryID, SaveQuery
+from app.user.comments.comments import UserComment,UserGetCommentByCommentId
 from app.user.user.user import Register,Logout,UpdatePassword,ForgotPassword,UserProfile, UserStatus,Login
 from app.user.opinion.like import Like,DisLike
 from app.user.fileupload.file_upload import download
-from app.user.support.support import SupportTicket,GetTicketsByUserId
 
-from app.admin.technology.technology import Technology
-from app.admin.comments.comments import AdminComment,AdminGetCommentsByUserId
-from app.admin.queries.queries import AdminQueries,AdminGetQueryByUserId
+from app.admin.technology.technology import Technology, GetTechnologybyTechnologyid
+from app.admin.comments.comments import AdminComment,AdminGetCommentsByUserId,AdminGetCommentsByCommentId
+from app.admin.queries.queries import AdminQueries,AdminGetQueryByUserId,AdminGetQueryByQueryId
 from app.admin.queries.queries import Unanswered
-from app.admin.users.users import AdminRoles,GetAllUsers,GetProfile,UserDelete,UserStatus,AdminForgotPassword,AdminLogin
-from app.admin.dashboard.topusers import TopUsers
-from app.admin.dashboard.admins import getadmins
-from app.admin.dashboard.getusers import getusers,UserSearch
-from app.admin.dashboard.filters import FilterRecord
+from app.admin.users.users import AdminRoles,GetAllUsers,GetProfile,UserDelete,UserRoleUpdate,AdminForgotPassword,AdminLogin
 
-
-# from app.utils.chatbot import Chat
-
+#user 
 api.add_resource(Login, "/login")
 api.add_resource(Register,"/register")
 api.add_resource(Logout,"/logout")
 api.add_resource(UpdatePassword,"/changepassword")
 api.add_resource(ForgotPassword,"/forgotpassword")
-api.add_resource(UserQueries,"/query")
-api.add_resource(UserComment,"/comment")
 api.add_resource(UserProfile,"/profile")
-api.add_resource(UserStatus,"/userstatuschange")
-api.add_resource(UserGetCommentByQueryId,"/user/getcommentsbyqueryid")
-api.add_resource(UserGetCommentsByuserId,"/user/getcommentsbyuserid")
-api.add_resource(UserGetQueryByUserId,"/user/getqueriesbyuserid")
-api.add_resource(UserGetQueryByTitle,"/user/getquerybytitle")
-api.add_resource(UserGetQueryByTechnology,"/user/usergetquerybytechnology")
+api.add_resource(UserStatus,"/userstatus")
+
+#query
+api.add_resource(UserQueries,"/query")
+api.add_resource(UserGetQueryByQueryID,"/user/querybyqueryid")
+
+#comment
+api.add_resource(UserComment,"/comment")
+api.add_resource(UserGetCommentByCommentId,"/user/commentbycommentid")
+
+#opinion
 api.add_resource(Like,"/like")
 api.add_resource(DisLike,"/dislike")
 api.add_resource(download,"/download")
+
+#save
 api.add_resource(SaveQuery,"/save")
-api.add_resource(SupportTicket,"/support")
-api.add_resource(GetTicketsByUserId,"/getticketsbyuserid")
 
-
+#admin technology
 api.add_resource(Technology,"/technology")
-api.add_resource(AdminComment,"/admin/comments")
-api.add_resource(AdminGetCommentsByUserId,"/admin/commentsbyuserid")
+api.add_resource(GetTechnologybyTechnologyid,"/technologybytechnologyid")
+
+#admin queries
 api.add_resource(AdminQueries,"/admin/queries")
-api.add_resource(AdminGetQueryByUserId,"/admin/getquerybyuserid")
-api.add_resource(TopUsers,"/topusers")
-api.add_resource(FilterRecord,"/filter")
-api.add_resource(getusers,"/getusers")
-api.add_resource(getadmins,"/getadmins")
+api.add_resource(AdminGetQueryByQueryId,"/admin/querybyqueryid")
+api.add_resource(AdminGetQueryByUserId,"/admin/querybyuserid")
 api.add_resource(Unanswered,"/unanswered")
-api.add_resource(UserSearch,"/usersearch")
-api.add_resource(AdminRoles,"/adminroles")
+
+#admin comments
+api.add_resource(AdminComment,"/admin/comments")
+api.add_resource(AdminGetCommentsByCommentId,"/admin/commentsbycommentid")
+api.add_resource(AdminGetCommentsByUserId,"/admin/commentsbyuserid")
+
+#admin users
+api.add_resource(AdminLogin,"/admin/login")
+api.add_resource(AdminForgotPassword,"/admin/forgotpassword")
+api.add_resource(UserDelete,"/admin/userdelete")
+api.add_resource(GetProfile,"/admin/getuserprofile")
+api.add_resource(GetAllUsers,"/admin/getallusers")
+
+#admin roles
+api.add_resource(AdminRoles,"/admin/roles")
+api.add_resource(UserRoleUpdate,"/admin/userrolechange")
 
 
-# api.add_resource(Chat,"/chat")

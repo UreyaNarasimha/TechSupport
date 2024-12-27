@@ -4,6 +4,7 @@ from sqlalchemy import and_
 from app import app,db
 
 def update_like_dislike_count(self):  # insert the like and dislike count
+    
     likes_dislikes_obj = Opinion.query.filter().all()
 
     if not likes_dislikes_obj:

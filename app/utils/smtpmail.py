@@ -10,22 +10,17 @@ def generate_temp_password_and_check():
     alphabet = string.ascii_lowercase + string.ascii_uppercase + string.digits + string.punctuation
     password = str(''.join(random.choices(alphabet, k=S)))
     if not password_validator(password):
-        # print("Generated Password is not satisfying")
-        print(password)
         return generate_temp_password_and_check()
-    print(password)
-    # print("Generated Password is satisfying")
     return password
 
 
 def send_mail_to_reset_password(to, user_name):
-
-    gmail_user = 'techblog.application@gmail.com'
-    gmail_password = 'techblog@123'
+    
+    gmail_user = 'iamafish914@gmail.com'
+    gmail_password = 'jaqz klpb ckdj bguq'
     sent_from = gmail_user
 
     password = generate_temp_password_and_check()
-    # subject = '[Tech-Blog] : Reset Password'
     subject = 'Forgot Password'
     body = "Hello " + f'{user_name}, ' + "\n\n" + \
            'Your account password with tech-blog has been changed and below are your login details.\n' +\
