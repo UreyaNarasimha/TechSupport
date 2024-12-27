@@ -16,8 +16,8 @@ def generate_temp_password_and_check():
 
 def send_mail_to_reset_password(to, user_name):
     
-    gmail_user = 'iamafish914@gmail.com'
-    gmail_password = 'jaqz klpb ckdj bguq'
+    gmail_user = 'techblog@gmail.com'
+    gmail_password = '*********'
     sent_from = gmail_user
 
     password = generate_temp_password_and_check()
